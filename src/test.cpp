@@ -16,6 +16,7 @@ int main() {
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n"; 
 
     for (int j = 0; j < image_height; j++) {
+        std::clog << "\rScanlines remaining: " << (image_height-j) << ' ' << std::flush; // Print the remaining scanlines
         for (int i = 0; i < image_width; i++) {
             // rgb color of each pixel with range 0.0 to 1.0
             auto r = double(i) / (image_width-1); // change the color based on the width position of the pixel
@@ -30,4 +31,5 @@ int main() {
             std::cout << ir << ' ' << ig << ' ' << ib << '\n';
         }
     }
+    std::clog << '\n' << std::flush;
 }

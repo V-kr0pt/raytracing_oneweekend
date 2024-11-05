@@ -10,7 +10,9 @@ set ( CMAKE_CXX_EXTENSIONS        OFF )
 
 # Add source files
 set(SOURCES
-    src/test.cpp
+    src/main.cpp
+    src/vec3.h
+    src/color.h
 )
 
 include_directories(src) # for include .h files

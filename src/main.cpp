@@ -1,9 +1,7 @@
-#include "color.h"
-#include "vec3.h"
-#include "ray.h"
+#include "common_header.h"
 #include "hittable.h"
+#include "hittable_list.h"
 #include "sphere.h"
-#include <iostream> 
 
 
 color ray_color(const ray& r){

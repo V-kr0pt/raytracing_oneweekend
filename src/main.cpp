@@ -4,12 +4,11 @@
 #include "sphere.h"
 
 
-color ray_color(const ray& r){
-    sphere sphere_obj(point3(0,0,-1), 0.5);
+color ray_color(const ray& r, const hittable& world){
     hit_record rec;
 
-    if (sphere_obj.hit(r, 0, 100, rec)){
-        return 0.5*color(rec.normal.x()+1, rec.normal.y()+1, rec.normal.z()+1); // mapping -1 to 1 -> 0 to 1
+    if (world.hit(r, 0, 100, rec)){
+        return 0.5*(rec.normal + color(1,1,1)); // mapping -1 to 1 -> 0 to 1
     }
 
     vec3 unit_direction = unit_vector(r.direction());
@@ -42,6 +41,11 @@ int main(){
     auto upper_left_corner = camera_center - viewport_u/2 - viewport_v/2 - vec3(0,0,focal_length);
     auto pixel00_loc = upper_left_corner + 0.5*(pixel_delta_u+pixel_delta_v);
 
+    // World
+    hittable_list world;
+    world.add(make_shared<sphere>(point3(0,0,-1), 0.5)); // add a sphere with center at (0,0,-1) and radius 0.5 to the world
+    world.add(make_shared<sphere>(point3(0,-100.5, -1), 100));// add a big sphere under the small one to act as the ground
+
 
     // Render
     std::cout << "P3\n" << width_img << " " << height_img << "\n" << "255\n";
@@ -53,7 +57,7 @@ int main(){
             auto ray_direction = pixel_center - camera_center;
             ray r(camera_center, ray_direction);
 
-            color pixel_color = ray_color(r);
+            color pixel_color = ray_color(r, world);
             write_color(std::cout, pixel_color);
         }
     }

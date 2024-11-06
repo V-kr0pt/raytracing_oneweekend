@@ -3,19 +3,25 @@
 #include "ray.h"
 #include <iostream> 
 
-bool hit_sphere(const point3& center, double radius, const ray& r){
+double hit_sphere(const point3& center, double radius, const ray& r){
     vec3 oc = center - r.origin();
     auto a = dot(r.direction(), r.direction());
     auto b = -2.0*dot(r.direction(), oc);
     auto c = dot(oc, oc) - radius*radius;
     auto discriminant = b*b - 4*a*c;
-    return (discriminant >= 0);
+    if (discriminant < 0){ // no intersection
+        return -1;
+    } else {
+        return (-b - std::sqrt(discriminant)) / (2.0*a); // return the closest intersection
+    }
 }
 
 color ray_color(const ray& r){
     point3 sphere_center(0, 0, -1);
-    if (hit_sphere(sphere_center, 0.5, r)){
-        return color(1, 0, 0);
+    auto t = hit_sphere(sphere_center, 0.5, r); // center, radius, ray
+    if (t >= 0){
+        vec3 N = unit_vector(r.at(t) - sphere_center); // normal vector (unit vector) at the intersection point
+        return 0.5*color(N.x()+1, N.y()+1, N.z()+1); // mapping -1 to 1 -> 0 to 1
     }
 
 

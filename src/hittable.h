@@ -7,6 +7,13 @@ class hit_record {
         point3 p;
         vec3 normal;
         double t;
+        bool front_face;
+
+        void set_face_normal(const ray& r, const vec3& outward_normal){
+            front_face = dot(r.direction(), outward_normal) < 0; // if the dot product is negative, the normal is pointing in opposite direction of the ray
+            normal = front_face ? outward_normal : -outward_normal;
+        }
+
 };
 
 class hittable{

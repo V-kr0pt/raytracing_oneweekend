@@ -5,14 +5,14 @@
 
 double hit_sphere(const point3& center, double radius, const ray& r){
     vec3 oc = center - r.origin();
-    auto a = dot(r.direction(), r.direction());
-    auto b = -2.0*dot(r.direction(), oc);
-    auto c = dot(oc, oc) - radius*radius;
-    auto discriminant = b*b - 4*a*c;
+    auto a = r.direction().length_squared(); // dot(r,r)
+    auto h = dot(r.direction(), oc); // h = b/-2
+    auto c = oc.length_squared() - radius*radius; // dot(oc, oc) - R^2
+    auto discriminant = h*h - a*c;
     if (discriminant < 0){ // no intersection
         return -1;
     } else {
-        return (-b - std::sqrt(discriminant)) / (2.0*a); // return the closest intersection
+        return (h - std::sqrt(discriminant)) / a; // return the closest intersection
     }
 }
 

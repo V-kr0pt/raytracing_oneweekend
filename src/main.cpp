@@ -1,29 +1,18 @@
 #include "color.h"
 #include "vec3.h"
 #include "ray.h"
+#include "hittable.h"
+#include "sphere.h"
 #include <iostream> 
 
-double hit_sphere(const point3& center, double radius, const ray& r){
-    vec3 oc = center - r.origin();
-    auto a = r.direction().length_squared(); // dot(r,r)
-    auto h = dot(r.direction(), oc); // h = b/-2
-    auto c = oc.length_squared() - radius*radius; // dot(oc, oc) - R^2
-    auto discriminant = h*h - a*c;
-    if (discriminant < 0){ // no intersection
-        return -1;
-    } else {
-        return (h - std::sqrt(discriminant)) / a; // return the closest intersection
-    }
-}
 
 color ray_color(const ray& r){
-    point3 sphere_center(0, 0, -1);
-    auto t = hit_sphere(sphere_center, 0.5, r); // center, radius, ray
-    if (t >= 0){
-        vec3 N = unit_vector(r.at(t) - sphere_center); // normal vector (unit vector) at the intersection point
-        return 0.5*color(N.x()+1, N.y()+1, N.z()+1); // mapping -1 to 1 -> 0 to 1
-    }
+    sphere sphere_obj(point3(0,0,-1), 0.5);
+    hit_record rec;
 
+    if (sphere_obj.hit(r, 0, 100, rec)){
+        return 0.5*color(rec.normal.x()+1, rec.normal.y()+1, rec.normal.z()+1); // mapping -1 to 1 -> 0 to 1
+    }
 
     vec3 unit_direction = unit_vector(r.direction());
     auto alpha = 0.5*(unit_direction.y()+1); //unit_direction is in the range -1 to 1, alpha has to be in the range 0 to 1

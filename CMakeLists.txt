@@ -13,6 +13,7 @@ set(SOURCES
     src/main.cpp
     src/vec3.h
     src/color.h
+    src/ray.h
 )
 
 include_directories(src) # for include .h files

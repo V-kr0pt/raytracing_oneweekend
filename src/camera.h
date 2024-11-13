@@ -7,6 +7,7 @@ class camera {
     public:
         double aspect_ratio = 1;
         int img_width = 100;
+        int samples_per_pixel = 100; //number of samples to do antialising
 
         void render(const hittable& world){
             initialize();
@@ -16,11 +17,12 @@ class camera {
             for (int j = 0; j < img_height; j++){
                 std::clog << "\r Scanlines remaining: " << (img_height - j) << " " << std::flush;
                 for (int i = 0; i < img_width; i++){
-                    auto pixel_center = pixel00_loc + i*pixel_delta_u + j*pixel_delta_v;
-                    auto ray_direction = pixel_center - center;
-                    ray r(center, ray_direction);                    
-
-                    color pixel_color = ray_color(r, world);
+                    color pixel_color(0,0,0);
+                    for (int sample=0; sample < samples_per_pixel; sample++){
+                        ray r = get_ray(i, j);                    
+                        pixel_color += ray_color(r, world);
+                    }
+                    pixel_color /= samples_per_pixel;
                     write_color(std::cout, pixel_color);
                 }
             }
@@ -67,6 +69,19 @@ class camera {
             vec3 unit_direction = unit_vector(r.direction());
             auto alpha = 0.5*(unit_direction.y()+1); //unit_direction is in the range -1 to 1, alpha has to be in the range 0 to 1
             return (1-alpha)*color(1, 1, 1) + alpha*color(0, 0, 1);
+        }
+
+        // make a ray from origin to a random sample centered in a pixel 
+        ray get_ray(int i, int j){
+            auto offset = sample_square();
+            auto pixel_sample = pixel00_loc + (offset.x() + i)*pixel_delta_u + (offset.y()+ j)*pixel_delta_v;
+            auto ray_direction = pixel_sample - center;
+
+            return ray(center, ray_direction);
+        }
+
+        vec3 sample_square(){
+            return vec3(random_double() - 0.5, random_double() - 0.5, 0);
         }
 
 

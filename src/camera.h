@@ -8,6 +8,7 @@ class camera {
         double aspect_ratio = 1;
         int img_width = 100;
         int samples_per_pixel = 100; //number of samples to do antialising
+        int max_depth = 10;   // Maximum number of ray bounces into scene
 
         void render(const hittable& world){
             initialize();
@@ -20,7 +21,7 @@ class camera {
                     color pixel_color(0,0,0);
                     for (int sample=0; sample < samples_per_pixel; sample++){
                         ray r = get_ray(i, j);                    
-                        pixel_color += ray_color(r, world);
+                        pixel_color += ray_color(r, max_depth, world);
                     }
                     pixel_color /= samples_per_pixel;
                     write_color(std::cout, pixel_color);
@@ -59,11 +60,14 @@ class camera {
             pixel00_loc = upper_left_corner + 0.5*(pixel_delta_u+pixel_delta_v);
         }
 
-        color ray_color(const ray& r, const hittable& world){
+        color ray_color(const ray& r, int depth, const hittable& world){
             hit_record rec;
+            if (depth <= 0){ return color(0,0,0); }
             
             if (world.hit(r, 0, 100, rec)){
-                return 0.5*(rec.normal + color(1,1,1)); // mapping -1 to 1 -> 0 to 1
+                vec3 direction = random_vector_on_hemisphere(rec.normal);
+                ray ray_reflex = ray(rec.p, direction);
+                return 0.5*ray_color(ray_reflex, depth-1, world); // Recursion
             }
 
             vec3 unit_direction = unit_vector(r.direction());

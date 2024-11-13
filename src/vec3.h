@@ -9,6 +9,15 @@ class vec3 {
     vec3() : e{0,0,0} {}
     vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}
 
+    static vec3 random(){
+        return vec3(random_double(), random_double(), random_double());
+    }
+
+    static vec3 random(double min, double max){
+        return vec3(random_double(min,max), random_double(min,max), random_double(min,max));
+    }
+
+
     double x() const { return e[0]; }
     double y() const { return e[1]; }
     double z() const { return e[2]; }
@@ -92,6 +101,26 @@ inline vec3 cross(const vec3& u, const vec3& v) {
 
 inline vec3 unit_vector(const vec3& v) {
     return v / v.length();
+}
+
+inline vec3 random_unit_vector(){
+    while(true){
+        auto p = vec3::random(-1,1);
+        auto p_sqr_length = p.length_squared();
+        if( 1e-160 < p_sqr_length && p_sqr_length <= 1.0){ // 1e-160 to not permit a 0 norm due to underflow
+            return p/std::sqrt(p_sqr_length); //it seems to be faster than use unit_vector(p) since we already have p_sqr_length
+        }
+    }
+}
+
+inline vec3 random_vector_on_hemisphere(const vec3 normal){
+    vec3 random_vector = random_unit_vector();
+    if (dot(random_vector, normal) < 0) {
+        return -random_vector;
+    } 
+    else{   
+        return random_vector;
+    }
 }
 
 #endif

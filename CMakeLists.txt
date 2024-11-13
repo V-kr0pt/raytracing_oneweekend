@@ -11,9 +11,15 @@ set ( CMAKE_CXX_EXTENSIONS        OFF )
 # Add source files
 set(SOURCES
     src/main.cpp
-    src/vec3.h
+    src/camera.h
     src/color.h
+    src/common_header.h
+    src/hittable_list.h
+    src/hittable.h
+    src/interval.h
     src/ray.h
+    src/sphere.h
+    src/vec3.h      
 )
 
 include_directories(src) # for include .h files

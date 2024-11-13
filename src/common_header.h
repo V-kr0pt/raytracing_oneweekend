@@ -31,7 +31,7 @@ inline double random_double(){
 
 inline double random_double(int rand_min, int rand_max){
     // [rand_min, rand_max)
-    return rand_min + std::rand()/(rand_max - rand_min);
+    return rand_min + (rand_max - rand_min)*random_double();
 }
 
 

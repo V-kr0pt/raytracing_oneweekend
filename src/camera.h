@@ -65,7 +65,7 @@ class camera {
             if (depth <= 0){ return color(0,0,0); }
             
             if (world.hit(r, 0.001, infinity, rec)){
-                vec3 direction = random_vector_on_hemisphere(rec.normal);
+                vec3 direction = rec.normal + random_vector_on_hemisphere(rec.normal);
                 ray ray_reflex = ray(rec.p, direction);
                 return 0.5*ray_color(ray_reflex, depth-1, world); // Recursion
             }

@@ -51,6 +51,12 @@ class vec3 {
     double length_squared() const {
         return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
     }
+
+    bool is_near_zero() const{
+        // Return true if the vector is close to zero in all dimensions.
+        auto s = 1e-8;
+        return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s);
+    }
 };
 
 // point3 is just an alias for vec3, but useful for geometric clarity in the code.
@@ -121,6 +127,12 @@ inline vec3 random_vector_on_hemisphere(const vec3 normal){
     else{   
         return random_vector;
     }
+}
+
+inline vec3 reflect(const vec3& v, const vec3& n) {
+    // v dot n to have the projection of v in n (the magnitude) *n to make it have the same direction of n
+    // (since n is unitary we dont need to divide by ||n||)
+    return v - 2*dot(v,n)*n; 
 }
 
 #endif

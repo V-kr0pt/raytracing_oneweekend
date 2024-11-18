@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include "hittable.h"
+#include "material.h"
 
 class camera {
     public:
@@ -18,9 +19,9 @@ class camera {
             for (int j = 0; j < img_height; j++){
                 std::clog << "\r Scanlines remaining: " << (img_height - j) << " " << std::flush;
                 for (int i = 0; i < img_width; i++){
-                    color pixel_color(0,0,0);
+                    color pixel_color(0,0,0);                    
                     for (int sample=0; sample < samples_per_pixel; sample++){
-                        ray r = get_ray(i, j);                    
+                        ray r = get_ray(i, j);                  
                         pixel_color += ray_color(r, max_depth, world);
                     }
                     pixel_color /= samples_per_pixel;
@@ -61,13 +62,17 @@ class camera {
         }
 
         color ray_color(const ray& r, int depth, const hittable& world){
-            hit_record rec;
             if (depth <= 0){ return color(0,0,0); }
+
+            hit_record rec;
             
             if (world.hit(r, 0.001, infinity, rec)){
-                vec3 direction = rec.normal + random_vector_on_hemisphere(rec.normal);
-                ray ray_reflex = ray(rec.p, direction);
-                return 0.5*ray_color(ray_reflex, depth-1, world); // Recursion
+                ray scattered;
+                color attenuation;
+                if (rec.mat->scatter(r, rec, attenuation, scattered)){
+                    return attenuation * ray_color(scattered, depth-1, world); //recursion
+                }
+                return color(0,0,0);
             }
 
             vec3 unit_direction = unit_vector(r.direction());

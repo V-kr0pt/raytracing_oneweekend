@@ -19,7 +19,8 @@ set(SOURCES
     src/interval.h
     src/ray.h
     src/sphere.h
-    src/vec3.h      
+    src/vec3.h
+    src/material.h     
 )
 
 include_directories(src) # for include .h files
